@@ -41,6 +41,8 @@ public class WebSecurityConfig {
     //12. Request continues to Controller
 
     // For InMemory Authentication, we need the UserDetails. And we need to set up the UserDetailsService which returns the UserDetails object.
+    // Currently, we have our user details service which is using in-memory authentication. Therefore it will use InMemoryUserDetailsManager to manage the user details in memory.
+    // If we want to use DaoAuthenticationProvider, we need to set up a UserDetailsService that fetches user details from the database.
     @Bean
     UserDetailsService userDetailsService() {
         UserDetails user = org.springframework.security.core.userdetails.User.withDefaultPasswordEncoder()
@@ -51,5 +53,7 @@ public class WebSecurityConfig {
 
         return new InMemoryUserDetailsManager(user);
     }
+
+
 
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpResponseDto {
-    private Long id;
-    private String username;
+public class RefreshTokenResponseDto {
+    private String accessToken;
+    private String refreshToken;
 }

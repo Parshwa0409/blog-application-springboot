@@ -270,3 +270,67 @@ This guide outlines the sequence of steps and the conceptual reasoning for build
         *   If authentication is successful, it returns an `Authentication` object.
         *   Use the `User` from this object to generate a JWT with your `AuthUtil`.
         *   Return the JWT to the user.
+---
+
+## Part 4: Implemented Improvements and Best Practices
+
+To elevate this implementation to a production-ready and reusable template, several best practices have been incorporated.
+
+### 1. Centralized Exception Handling in `JwtAuthFilter`
+
+**Before:** The filter manually caught specific JWT exceptions (`ExpiredJwtException`, etc.) and wrote a raw JSON error to the response. This approach bypasses Spring's central error handling mechanism.
+
+**After:** The filter now has a single `try-catch (Exception ex)` block. Instead of writing to the response directly, it delegates the exception to the `HandlerExceptionResolver`.
+
+```java
+// In JwtAuthFilter.java
+} catch (Exception ex) {
+    log.error("Exception in JwtAuthFilter: ", ex);
+    handlerExceptionResolver.resolveException(request, response, null, ex);
+}
+```
+
+**Benefit:** This ensures that authentication errors are handled by your `GlobalExceptionHandler` just like any other application error, leading to consistent error response formats, cleaner code, and better adherence to Spring's design principles.
+
+### 2. CORS (Cross-Origin Resource Sharing) Configuration
+
+**Problem:** By default, browsers block web pages from making requests to a different domain (or port) than the one that served the page. This would prevent a React/Angular/Vue frontend from calling your API.
+
+**Solution:** A `CorsConfigurationSource` bean has been added to `WebSecurityConfig`.
+
+```java
+// In WebSecurityConfig.java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    // Specify allowed origins, methods, and headers
+    configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
+```
+This configuration is then enabled in the `securityFilterChain` with `.cors(...)`.
+
+**Benefit:** Your API is now ready to be consumed by frontend applications hosted on different origins, which is a standard requirement for modern web development.
+### 3. Refresh Token Mechanism
+
+**Problem:** Short-lived access tokens are good for security, but they create a poor user experience by forcing users to log in frequently. Long-lived access tokens are a security risk if they are stolen.
+
+**Solution:** A refresh token system has been implemented.
+
+**How It Works:**
+
+1.  **Login:** When a user logs in via `/auth/login`, they now receive both a short-lived `accessToken` (1 minute) and a long-lived `refreshToken` (7 days). The refresh token is stored in the database.
+2.  **Access Token Expiration:** The client uses the `accessToken` to access protected resources. When it expires, the API will return a 401 Unauthorized error.
+3.  **Token Refresh:** The client application should then send the `refreshToken` to the new `POST /auth/refresh` endpoint.
+4.  **Validation:** The server validates the refresh token:
+    *   It checks if the token exists in the database.
+    *   It verifies that the token has not expired.
+5.  **New Token Issuance:** If the refresh token is valid, the server generates a brand new `accessToken` and returns it to the client. The client can then retry the original request with the new token.
+
+**Benefit:** This provides the best of both worlds: the high security of short-lived access tokens and the great user experience of long-term sessions, without the need for the user to constantly re-enter their credentials.

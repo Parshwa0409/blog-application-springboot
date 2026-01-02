@@ -1,8 +1,5 @@
 package patil.parshwa.blog.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import patil.parshwa.blog.error.ApiError;
 import patil.parshwa.blog.models.User;
 import patil.parshwa.blog.repositories.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
@@ -42,8 +37,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwt = authHeader.substring(7);
         try {
+            String jwt = authHeader.substring(7);
             String username = authUtil.getUsernameFromToken(jwt);
 
             if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -57,20 +52,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
             filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException ex) {
-            writeUnauthorized(response, new ApiError("TOKEN_EXPIRED", "Your session has expired. Please log in again."));
-        } catch (MalformedJwtException | SignatureException ex) {
-            writeUnauthorized(response, new ApiError("TOKEN_INVALID", "Invalid token"));
-        } catch (RuntimeException ex) {
-            // user not found or other runtime errors
-            writeUnauthorized(response, new ApiError("AUTH_ERROR", ex.getMessage()));
+        } catch (Exception ex) {
+            log.error("Exception in JwtAuthFilter: ", ex);
+            handlerExceptionResolver.resolveException(request, response, null, ex);
         }
-    }
-
-    private void writeUnauthorized(HttpServletResponse response, ApiError apiError) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-        ObjectMapper mapper = new ObjectMapper();
-        response.getWriter().write(mapper.writeValueAsString(apiError));
     }
 }

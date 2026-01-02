@@ -28,6 +28,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Post> posts;
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(  
         name = "user_roles",

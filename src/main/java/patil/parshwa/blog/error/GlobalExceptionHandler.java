@@ -80,4 +80,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleGenericException(Exception ex) {
         return new ResponseEntity<>(new ApiError("INTERNAL_ERROR", "An unexpected error occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    // ----------------- ResourceNotFound Class -----------------
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(new ApiError("RESOURCE_NOT_FOUND", ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
 }

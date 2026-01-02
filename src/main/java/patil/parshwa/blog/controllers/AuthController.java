@@ -1,0 +1,32 @@
+package patil.parshwa.blog.controllers;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import patil.parshwa.blog.dto.LoginRequestDto;
+import patil.parshwa.blog.dto.LoginResponseDto;
+import patil.parshwa.blog.dto.SignUpRequestDto;
+import patil.parshwa.blog.dto.SignUpResponseDto;
+import patil.parshwa.blog.services.AuthService;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired AuthService authService;
+
+    // All the requests w.r.t Login and Register comes here.
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {
+        return ResponseEntity.ok(authService.login(requestDto));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<SignUpResponseDto> signup(@RequestBody SignUpRequestDto requestDto) {
+        return ResponseEntity.ok(authService.signup(requestDto));
+    }
+}

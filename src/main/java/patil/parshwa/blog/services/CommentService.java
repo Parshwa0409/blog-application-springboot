@@ -2,11 +2,14 @@ package patil.parshwa.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import patil.parshwa.blog.dto.CommentRequestDto;
 import patil.parshwa.blog.dto.CommentResponseDto;
+import patil.parshwa.blog.error.ForbiddenException;
 import patil.parshwa.blog.error.ResourceNotFoundException;
 import patil.parshwa.blog.models.Comment;
 import patil.parshwa.blog.models.Post;
+import patil.parshwa.blog.models.User;
 import patil.parshwa.blog.repositories.CommentRepository;
 import patil.parshwa.blog.repositories.PostRepository;
 import patil.parshwa.blog.security.UserFacade;
@@ -18,19 +21,14 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
 
-    private void assertPostExists(long postId) {
-        if (!postRepository.existsById(postId)) {
-            throw new ResourceNotFoundException("Post", "id", postId);
-        }
-    }
-
+    @Transactional
     public CommentResponseDto addComment(long postId, CommentRequestDto commentRequestDto) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
         long now = System.currentTimeMillis();
 
-        Comment comment = Comment
-                .builder()
+        Comment comment = Comment.builder()
                 .author(userFacade.getCurrentUser())
                 .post(post)
                 .content(commentRequestDto.getContent())
@@ -43,19 +41,20 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    @Transactional(readOnly = true)
     public CommentResponseDto getComment(long postId, long commentId) {
-        assertPostExists(postId);
-
-        Comment comment = commentRepository.findByIdAndPostId(commentId, postId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        Comment comment = commentRepository.findByIdAndPostId(commentId, postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 
         return new CommentResponseDto(comment);
     }
 
+    @Transactional
     public CommentResponseDto updateComment(long postId, long commentId, CommentRequestDto commentRequestDto) {
-        assertPostExists(postId);
+        Comment comment = commentRepository.findByIdAndPostId(commentId, postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 
-        Comment comment = commentRepository.findByIdAndPostId(commentId, postId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
-
+        validateCommentAuthor(comment);
 
         comment.setContent(commentRequestDto.getContent());
         comment.setUpdatedAt(System.currentTimeMillis());
@@ -64,11 +63,20 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
+    @Transactional
     public void deleteComment(long postId, long commentId) {
-        assertPostExists(postId);
+        Comment comment = commentRepository.findByIdAndPostId(commentId, postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 
-        Comment comment = commentRepository.findByIdAndPostId(commentId, postId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        validateCommentAuthor(comment);
 
         commentRepository.delete(comment);
+    }
+
+    private void validateCommentAuthor(Comment comment) {
+        User currentUser = userFacade.getCurrentUser();
+        if (!comment.getAuthor().equals(currentUser)) {
+            throw new ForbiddenException("You are not authorized to perform this action");
+        }
     }
 }

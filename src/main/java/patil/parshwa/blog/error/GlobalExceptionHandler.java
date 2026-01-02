@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Invalid request");
 
-        return new ResponseEntity<>(new ApiError("VALIDATION FAILED", errorMessage), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiError("VALIDATION_FAILED", errorMessage), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -85,5 +85,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex) {
         return new ResponseEntity<>(new ApiError("RESOURCE_NOT_FOUND", ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    // ----------------- Forbidden Exception -----------------
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiError> handleForbiddenException(ForbiddenException ex) {
+        return new ResponseEntity<>(new ApiError("FORBIDDEN", ex.getMessage()), HttpStatus.FORBIDDEN);
     }
 }

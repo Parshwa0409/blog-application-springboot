@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import patil.parshwa.blog.dto.PostRequestDto;
 import patil.parshwa.blog.dto.PostResponseDto;
+import patil.parshwa.blog.error.ResourceNotFoundException;
 import patil.parshwa.blog.models.Post;
 import patil.parshwa.blog.repositories.PostRepository;
 import patil.parshwa.blog.security.UserFacade;
@@ -27,5 +28,33 @@ public class PostService {
         postRepository.save(post);
 
         return new PostResponseDto(post);
+    }
+
+    public PostResponseDto getPost(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Posts", "id", postId)
+                );
+
+        return new PostResponseDto(post);
+    }
+
+    public PostResponseDto updatePost(Long postId, PostRequestDto postRequestDto) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Posts", "id", postId)
+                );
+
+        post.setTitle(postRequestDto.getTitle());
+        post.setContent(postRequestDto.getContent());
+        post.setUpdatedAt(System.currentTimeMillis());
+
+        postRepository.save(post);
+
+        return new PostResponseDto(post);
+    }
+
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
     }
 }

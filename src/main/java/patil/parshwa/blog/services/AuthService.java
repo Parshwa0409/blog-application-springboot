@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service;
 import patil.parshwa.blog.dto.LoginRequestDto;
 import patil.parshwa.blog.dto.*;
 import patil.parshwa.blog.models.RefreshToken;
+import patil.parshwa.blog.models.Role;
 import patil.parshwa.blog.models.User;
+import patil.parshwa.blog.repositories.RoleRepository;
 import patil.parshwa.blog.repositories.UserRepository;
 import patil.parshwa.blog.security.AuthUtil;
+
+import java.util.Set;
 
 @Service
 public class AuthService {
@@ -19,6 +23,7 @@ public class AuthService {
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private AuthUtil authUtil;
     @Autowired private UserRepository userRepository;
+    @Autowired private RoleRepository roleRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private RefreshTokenService refreshTokenService;
 
@@ -60,10 +65,14 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
         User newUser = User.builder()
                 .username(requestDto.getUsername())
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
+                .roles(Set.of(userRole))
                 .build();
 
         User savedUser = userRepository.save(newUser);

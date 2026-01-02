@@ -21,21 +21,26 @@ public class AuthUtil {
     }
 
     public String generateAccessToken(User user){
+        var roles = user.getAuthorities().stream().map(Object::toString).toList();
+
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("userId", user.getId())
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 minute
+                .claim("roles", roles)
+                .expiration(new Date(System.currentTimeMillis() + 60 * 1000)) // 1 minute
                 .signWith(getSecretKey())
                 .compact();
     }
 
     public String getUsernameFromToken(String jwt) {
-        Claims claims=  Jwts.parser()
-                            .verifyWith(getSecretKey())
-                            .build()
-                            .parseSignedClaims(jwt)
-                            .getPayload();
+        return getClaims(jwt).getSubject();
+    }
 
-        return claims.getSubject();
+    private Claims getClaims(String jwt) {
+        return Jwts.parser()
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(jwt)
+                .getPayload();
     }
 }

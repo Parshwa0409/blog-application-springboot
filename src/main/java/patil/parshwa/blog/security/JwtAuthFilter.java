@@ -9,10 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import patil.parshwa.blog.models.User;
 import patil.parshwa.blog.repositories.UserRepository;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ import java.io.IOException;
 @Slf4j // logging
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-    @Autowired private UserRepository userRepository;
+    @Autowired private UserDetailsServiceImpl userDetailsService;
     @Autowired private  AuthUtil authUtil;
     @Autowired private HandlerExceptionResolver handlerExceptionResolver;
 
@@ -42,12 +43,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String username = authUtil.getUsernameFromToken(jwt);
 
             if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                User user  = userRepository.findByUsername(username).orElseThrow(() ->
-                        new RuntimeException("User not found with username: " + username)
-                );
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

@@ -27,7 +27,7 @@ public class AuthUtil {
                 .subject(user.getUsername())
                 .claim("userId", user.getId())
                 .claim("roles", roles)
-                .expiration(new Date(System.currentTimeMillis() + 60 * 1000)) // 1 minute
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 minute
                 .signWith(getSecretKey())
                 .compact();
     }

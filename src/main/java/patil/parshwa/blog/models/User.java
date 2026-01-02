@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,9 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Post> posts;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(  

@@ -1,6 +1,6 @@
 package patil.parshwa.blog.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,9 +11,10 @@ import patil.parshwa.blog.services.AuthService;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired AuthService authService;
+    private final AuthService authService;
 
     // All the requests w.r.t Login and Register comes here.
 

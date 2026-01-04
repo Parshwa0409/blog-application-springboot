@@ -2,6 +2,7 @@ package patil.parshwa.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import patil.parshwa.blog.error.ResourceNotFoundException;
 import patil.parshwa.blog.models.Like;
 import patil.parshwa.blog.models.LikeId;
@@ -18,6 +19,7 @@ public class LikeService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
 
+    @Transactional
     public void likePost(long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
         User user = userFacade.getCurrentUser();
@@ -28,6 +30,7 @@ public class LikeService {
         likeRepository.save(new Like(likeId, user, post, System.currentTimeMillis()));
     }
 
+    @Transactional
     public void deleteLike(long postId) {
         User user = userFacade.getCurrentUser();
         LikeId likeId = new LikeId(user.getId(), postId);

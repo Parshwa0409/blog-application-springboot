@@ -6,14 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "likes")
+@Entity(name = "favorites")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Like {
+public class Favorite {
     @EmbeddedId
-    private LikeId likeId;
+    private FavId favId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId(value = "userId")

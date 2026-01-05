@@ -2,72 +2,102 @@ INSERT INTO roles (name) VALUES ('ROLE_USER');
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
 
 INSERT into users (username, email, password) VALUES ('Alice', 'alice@gamil.com', '$2a$12$9CHk.045yPPmn82kA6L5H.o5JqZkhySM7genfaE6WcD86mYIpB/pm');
-INSERT into users (username, email, password) VALUES ('anooj', 'alice@gamil.com', '$2a$12$9CHk.045yPPmn82kA6L5H.o5JqZkhySM7genfaE6WcD86mYIpB/pm');
+INSERT into users (username, email, password) VALUES ('anooj', 'anooj@gamil.com', '$2a$12$9CHk.045yPPmn82kA6L5H.o5JqZkhySM7genfaE6WcD86mYIpB/pm');
 
 INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);
 INSERT INTO user_roles(user_id, role_id) VALUES (1, 2);
 INSERT INTO user_roles(user_id, role_id) VALUES (2, 1);
 
--- post
-INSERT INTO post (title, content, user_id) VALUES ('Getting started with Spring Boot', 'Intro guide to building REST APIs with Spring Boot.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Maven build tips', 'Useful tips to speed up and optimize Maven builds.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('JPA entity mappings', 'Guide on one-to-many and many-to-many relationships.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Bean validation basics', 'Using javax validation annotations in DTOs.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('Testing with JUnit 5', 'Structuring unit and integration tests.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Spring Security overview', 'Configuring authentication and authorization.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('Flyway vs Liquibase', 'Pros and cons for database migrations.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('DTO vs Entity', 'When to use DTOs and mapping strategies.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('REST error handling', 'Standardizing API error responses.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Pagination in Spring Data', 'Implementing pageable repositories.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('H2 for local dev', 'Using H2 for fast local prototyping.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Profiles in Spring', 'Managing `dev`, `test`, `prod` configurations.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('Logging with SLF4J', 'Best practices for application logging.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Actuator endpoints', 'Monitoring health and metrics.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('OpenAPI docs', 'Generating API docs with springdoc.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Exception handling', 'Global handlers with `@ControllerAdvice`.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('Caching with Spring', 'Using `@Cacheable` and cache providers.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Async tasks', 'Using `@Async` and thread pools.', 2);
-INSERT INTO post (title, content, user_id) VALUES ('Scheduling jobs', 'Cron and fixed rate scheduling.', 1);
-INSERT INTO post (title, content, user_id) VALUES ('Database indexing', 'Choosing indexes for performance.', 2);
+-- post (add created_at, updated_at)
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'Getting started with Spring Boot',
+    'Learn to set up Spring Boot, create REST APIs, and run your app quickly using Spring Initializr and proper project structure.',
+    1, 1672531100000, 1672531200000
+);
 
--- comment (post_id references the order created above: 1..20)
-INSERT INTO comment (content, post_id, user_id) VALUES ('Nice overview, thanks!', 1, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Add sample repo?', 1, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Helpful guide.', 2, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Use `-T` for parallel builds.', 2, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Clear explanation on relationships.', 3, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Show cascade examples.', 3, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Validation groups would be useful.', 4, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Include custom validators.', 4, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Please cover mocking.', 5, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Parametrized tests FTW.', 5, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('What about OAuth2?', 6, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('RBAC examples are great.', 6, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('We use Flyway in prod.', 7, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Liquibase changeSets are readable.', 7, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('MapStruct recommendation?', 8, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Avoid exposing entities.', 8, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Return RFC7807 in errors.', 9, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Include traceId.', 9, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Pageable is super handy.', 10, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Remember sorting.', 10, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('H2 console tip!', 11, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Seed data helps.', 11, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Profiles keep things clean.', 12, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Use `@ConfigurationProperties`.', 12, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Avoid logs in hot paths.', 13, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Structured logging rocks.', 13, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Actuator security reminders.', 14, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Expose only needed endpoints.', 14, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('springdoc simplifies a lot.', 15, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Add example schemas.', 15, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('ControllerAdvice saves time.', 16, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Map errors consistently.', 16, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Cache eviction strategies?', 17, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Show Redis example.', 17, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Async pitfalls?', 18, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Thread pool sizing matters.', 18, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Use cron expressions carefully.', 19, 2);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Add `@Scheduled` samples.', 19, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Index coverage matters.', 20, 1);
-INSERT INTO comment (content, post_id, user_id) VALUES ('Measure before adding indexes.', 20, 2);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'Maven build tips',
+    'Tips to optimize Maven builds: use dependency caching, parallel builds, skip tests when needed, and leverage Maven Wrapper.',
+    2, 1672531210000, 1672531310000
+);
+
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'JPA entity mappings',
+    'Guide to one-to-many and many-to-many mappings in JPA, including annotations, cascading, and best practices for entities.',
+    1, 1672531320000, 1672531420000
+);
+
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'Bean validation basics',
+    'Learn to use javax validation annotations like @NotNull, @Size, @Email in DTOs and entities to handle input validation.',
+    2, 1672531430000, 1672531530000
+);
+
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'Testing with JUnit 5',
+    'Structuring unit and integration tests with JUnit 5, using @Test, @BeforeEach, @AfterEach, and Mockito for mocking.',
+    1, 1672531540000, 1672531640000
+);
+
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES(
+    'Spring Security overview',
+    'Intro to Spring Security: configure authentication, authorization, roles, and secure REST APIs, including JWT basics.',
+    2, 1672531650000, 1672531750000
+);
+
+-- Additional posts to reach 20
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('REST API design','Best practices for designing REST APIs: resources, verbs, status codes.',1,1672531760000,1672531860000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Dockerizing Spring Boot','Create Dockerfile, multi-stage builds, and compose.',2,1672531870000,1672531970000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Kafka basics','Produce/consume messages, topics, partitions.',1,1672531980000,1672532080000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Observability','Metrics, logs, traces with Micrometer.',2,1672532090000,1672532190000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Caching strategies','@Cacheable, eviction, Redis.',1,1672532200000,1672532300000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Error handling','ControllerAdvice, problem details.',2,1672532310000,1672532410000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Pagination & sorting','Spring Data pageable.',1,1672532420000,1672532520000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('File uploads','Multipart handling and validation.',2,1672532530000,1672532630000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('WebSockets','Realtime updates with STOMP.',1,1672532640000,1672532740000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('GraphQL','Schema and resolvers overview.',2,1672532750000,1672532850000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('CI/CD pipelines','GitHub Actions basics.',1,1672532860000,1672532960000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Testing REST','RestAssured examples.',2,1672532970000,1672533070000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Security testing','OWASP and common vulns.',1,1672533080000,1672533180000);
+INSERT INTO post (title, content, user_id, created_at, updated_at) VALUES ('Performance tuning','JVM, GC, profiling tips.',2,1672533190000,1672533290000);
+
+-- comment (add created_at, updated_at; post_id assumes IDs auto-increment from 1..20)
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Nice overview, thanks!', 1, 2, 1672534000000, 1672534010000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Add sample repo?', 1, 1, 1672534020000, 1672534030000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Helpful guide.', 2, 1, 1672534040000, 1672534050000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Use -T for parallel builds.', 2, 2, 1672534060000, 1672534070000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Clear explanation on relationships.', 3, 2, 1672534080000, 1672534090000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Show cascade examples.', 3, 1, 1672534100000, 1672534110000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Validation groups would be useful.', 4, 1, 1672534120000, 1672534130000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Include custom validators.', 4, 2, 1672534140000, 1672534150000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Please cover mocking.', 5, 2, 1672534160000, 1672534170000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Parametrized tests FTW.', 5, 1, 1672534180000, 1672534190000);
+-- More comments across later posts
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Great API design pointers.', 7, 1, 1672534200000, 1672534210000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Docker compose snippet?', 8, 2, 1672534220000, 1672534230000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('What about consumer groups?', 9, 1, 1672534240000, 1672534250000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Micrometer tags example.', 10, 2, 1672534260000, 1672534270000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Cache invalidation is hard.', 11, 1, 1672534280000, 1672534290000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('ProblemDetails RFC link?', 12, 2, 1672534300000, 1672534310000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Pageable tips appreciated.', 13, 1, 1672534320000, 1672534330000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Upload size limits?', 14, 2, 1672534340000, 1672534350000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('STOMP subscriptions?', 15, 1, 1672534360000, 1672534370000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('GraphQL vs REST debate.', 16, 2, 1672534380000, 1672534390000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Action workflow example?', 17, 1, 1672534400000, 1672534410000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('RestAssured matcher tips.', 18, 2, 1672534420000, 1672534430000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('Top 10 OWASP list?', 19, 1, 1672534440000, 1672534450000);
+INSERT INTO comment (content, post_id, user_id, created_at, updated_at) VALUES ('JVM flags for perf?', 20, 2, 1672534460000, 1672534470000);
+
+-- likes (user_id, post_id)
+INSERT INTO likes (user_id, post_id, created_at) VALUES (1, 1, 1672531199000);
+INSERT INTO likes (user_id, post_id, created_at) VALUES (1, 3, 1672531199000);
+INSERT INTO likes (user_id, post_id, created_at) VALUES (1, 5, 1672531199000);
+INSERT INTO likes (user_id, post_id, created_at) VALUES (2, 1, 1672531199000);
+INSERT INTO likes (user_id, post_id, created_at) VALUES (2, 2, 1672531199000);
+INSERT INTO likes (user_id, post_id, created_at) VALUES (2, 4, 1672531199000);
+
+-- favorites (user_id, post_id)
+INSERT INTO favorites (user_id, post_id, created_at) VALUES (1, 2, 1672531199000);
+INSERT INTO favorites (user_id, post_id, created_at) VALUES (1, 4, 1672531199000);
+INSERT INTO favorites (user_id, post_id, created_at) VALUES (2, 3, 1672531199000);
+INSERT INTO favorites (user_id, post_id, created_at) VALUES (2, 5, 1672531199000);

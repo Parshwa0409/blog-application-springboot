@@ -4,15 +4,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import patil.parshwa.blog.dto.PostSummaryDto;
 import patil.parshwa.blog.dto.TagRequestDto;
 import patil.parshwa.blog.dto.TagResponseDto;
+import patil.parshwa.blog.models.Tag;
+import patil.parshwa.blog.services.PostTagService;
 import patil.parshwa.blog.services.TagService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tags")
 @RequiredArgsConstructor
 public class TagController {
     private final TagService tagService;
+    private final PostTagService postTagService;
+
+    @GetMapping
+    public ResponseEntity<List<TagResponseDto>> getAllTags() {
+        // Implementation for fetching all tags goes here
+        List<TagResponseDto> tags = tagService.getAllTags();
+        return new ResponseEntity<>(tags, HttpStatus.OK);
+    }
 
     @GetMapping("/{tagId}")
     public ResponseEntity<TagResponseDto> getTags(@PathVariable long tagId) {
@@ -40,5 +53,11 @@ public class TagController {
         // Implementation for deleting a tag goes here
         tagService.deleteTag(tagId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{tagId}/posts")
+    public ResponseEntity<List<PostSummaryDto>> getPostsByTag(@PathVariable long tagId) {
+        List<PostSummaryDto> posts = postTagService.getPostsByTagId(tagId);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

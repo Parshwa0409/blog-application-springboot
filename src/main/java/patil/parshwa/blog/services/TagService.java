@@ -8,6 +8,8 @@ import patil.parshwa.blog.error.ResourceNotFoundException;
 import patil.parshwa.blog.models.Tag;
 import patil.parshwa.blog.repositories.TagRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TagService {
@@ -37,5 +39,9 @@ public class TagService {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tag","id", tagId));
         return new TagResponseDto(tag);
+    }
+
+    public List<TagResponseDto> getAllTags() {
+        return tagRepository.findAll().stream().map(TagResponseDto::new).toList();
     }
 }

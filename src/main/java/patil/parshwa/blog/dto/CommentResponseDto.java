@@ -11,7 +11,6 @@ import patil.parshwa.blog.models.Comment;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentResponseDto {
-
     public CommentResponseDto(Comment comment){
         this.id = comment.getId();
         this.content = comment.getContent();

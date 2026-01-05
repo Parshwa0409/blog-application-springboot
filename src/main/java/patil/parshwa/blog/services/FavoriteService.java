@@ -2,6 +2,7 @@ package patil.parshwa.blog.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import patil.parshwa.blog.dto.PostSummaryDto;
 import patil.parshwa.blog.error.ResourceNotFoundException;
 import patil.parshwa.blog.models.FavId;
 import patil.parshwa.blog.models.Favorite;
@@ -10,6 +11,8 @@ import patil.parshwa.blog.models.User;
 import patil.parshwa.blog.repositories.FavoriteRepository;
 import patil.parshwa.blog.repositories.PostRepository;
 import patil.parshwa.blog.security.UserFacade;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +49,14 @@ public class FavoriteService {
         }
 
         favoriteRepository.existsByFavId(favId);
+    }
+
+    public List<PostSummaryDto> getMyFavPosts() {
+        User user = userFacade.getCurrentUser();
+        return favoriteRepository.findByUser(user)
+                .stream()
+                .map(Favorite::getPost)
+                .map(PostSummaryDto::new)
+                .toList();
     }
 }

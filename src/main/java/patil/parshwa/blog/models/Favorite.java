@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity(name = "favorites")
 @Getter
@@ -23,6 +25,7 @@ public class Favorite {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId(value = "postId")
     @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 
     private long createdAt;

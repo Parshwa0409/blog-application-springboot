@@ -97,3 +97,5 @@ sequenceDiagram
     JwtAuthFilter->>+YourController: continue request
     YourController-->>-Client: 200 OK (Protected Data)
 ```
+### API Contract
+For a detailed overview of all API endpoints, refer to the [API Contract](api-contract.md).

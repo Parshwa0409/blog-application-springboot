@@ -10,13 +10,10 @@ import patil.parshwa.blog.dto.*;
 import patil.parshwa.blog.services.AuthService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/public/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
-
-    // All the requests w.r.t Login and Register comes here.
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto) {

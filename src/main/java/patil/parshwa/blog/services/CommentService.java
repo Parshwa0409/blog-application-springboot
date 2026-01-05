@@ -74,8 +74,9 @@ public class CommentService {
     }
 
     private void validateCommentAuthor(Comment comment) {
-        User currentUser = userFacade.getCurrentUser();
-        if (!comment.getAuthor().equals(currentUser)) {
+        long userId = userFacade.getCurrentUser().getId();
+        long commentAuthorId = comment.getAuthor().getId();
+        if (commentAuthorId != userId) {
             throw new ForbiddenException("You are not authorized to perform this action");
         }
     }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import patil.parshwa.blog.dto.PostRequestDto;
 import patil.parshwa.blog.dto.PostResponseDto;
+import patil.parshwa.blog.dto.PostResponseDto;
 import patil.parshwa.blog.services.PostService;
 
 @RestController

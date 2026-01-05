@@ -15,14 +15,7 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
-
-    @GetMapping("/me")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> getMe() {
-        return ResponseEntity.ok(userService.getUser());
-    }
 
     @GetMapping("/users")
     @PreAuthorize("hasRole('ADMIN')")

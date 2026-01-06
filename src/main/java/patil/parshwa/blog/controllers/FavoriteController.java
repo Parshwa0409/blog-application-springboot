@@ -1,27 +1,25 @@
 package patil.parshwa.blog.controllers;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import patil.parshwa.blog.dto.FavoriteRequestDto;
 import patil.parshwa.blog.services.FavoriteService;
 
 @RestController
-@RequestMapping("/api/v1/users/favorites")
+@RequestMapping("/api/v1/posts/{postId}/favorites")
 @RequiredArgsConstructor
 public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PostMapping
-    public ResponseEntity<Void> addFavorite(@Valid @RequestBody FavoriteRequestDto favoriteRequestDto) {
-        favoriteService.addFavorite(favoriteRequestDto.getPostId());
+    public ResponseEntity<Void> addFavorite(@PathVariable long postId) {
+        favoriteService.addFavorite(postId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> removeFavorite(@Valid @RequestBody FavoriteRequestDto favoriteRequestDto) {
-        favoriteService.removeFavorite(favoriteRequestDto.getPostId());
+    public ResponseEntity<Void> removeFavorite(@PathVariable long postId) {
+        favoriteService.removeFavorite(postId);
         return ResponseEntity.noContent().build();
     }
 }

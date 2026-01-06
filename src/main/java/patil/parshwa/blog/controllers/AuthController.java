@@ -10,7 +10,7 @@ import patil.parshwa.blog.dto.*;
 import patil.parshwa.blog.services.AuthService;
 
 @RestController
-@RequestMapping("/api/v1/public/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

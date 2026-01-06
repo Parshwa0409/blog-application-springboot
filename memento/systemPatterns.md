@@ -1,101 +1,76 @@
-# System Patterns: JWT Authentication Architecture
+# System Patterns: Standardized Blog API
 
-This document outlines the design patterns and architectural components of the JWT-based authentication system in this Spring Boot application.
+This document outlines the design patterns and architectural components of the blog application's backend API.
 
 ## 1. High-Level Architecture
 
-The authentication system follows a token-based, stateless pattern. The key components and their interactions are as follows:
+The backend follows a standard RESTful pattern with stateless JWT-based authentication. All endpoints are grouped under the `/api/v1/` prefix.
 
 ```mermaid
 graph TD
-    subgraph "User"
-        C[Client]
+    subgraph "Client"
+        C[Frontend App]
     end
 
     subgraph "Spring Boot Application"
-        subgraph "Public Endpoints"
-            Login[POST /api/auth/login]
-            Register[POST /api/auth/signup]
+        subgraph "Publicly Accessible Endpoints"
+            Auth[POST /api/v1/auth/...]
+            Feed[GET /api/v1/feed]
+            Tags[GET /api/v1/tags]
+            ReadPosts[GET /api/v1/posts/{id}/...]
         end
 
-        subgraph "Security Layer"
-            Filter[JwtAuthFilter] --> AuthManager[AuthenticationManager]
-            AuthManager --> UserDetailsSvc[UserDetailsService]
+        subgraph "Security Layer (Spring Security)"
+            Filter[JwtAuthFilter]
+            Config[WebSecurityConfig]
         end
 
-        subgraph "Protected Resources"
-            API[GET /api/user/me]
+        subgraph "Authenticated Endpoints"
+            WritePosts[POST, PUT, DELETE /api/v1/posts/...]
+            Comments[POST, PUT, DELETE /api/v1/posts/{id}/comments/...]
+            Likes[POST, DELETE /api/v1/posts/{id}/likes]
+            Favorites[POST, DELETE /api/v1/posts/{id}/favorites]
+            Me[GET /api/v1/me/...]
+            Admin[GET /api/v1/users]
         end
     end
 
-    C -- 1. Credentials --> Login
-    Login -- 2. Authenticate --> AuthManager
-    UserDetailsSvc -- 3. Fetches User --> DB[(Database)]
-    AuthManager -- 4. Returns Principal --> Login
-    Login -- 5. Generates JWT --> C
-    C -- 6. Request with JWT --> API
-    API -- 7. Validate Token --> Filter
-    Filter -- 8. Sets SecurityContext --> API
-    API -- 9. Returns Resource --> C
+    C -- HTTP Request --> Config
+    Config -- Routes to --> Publicly Accessible Endpoints
+    Config -- JWT Check --> Filter
+    Filter -- Authenticates --> Authenticated Endpoints
 ```
 
 ## 2. Key Architectural Patterns
 
-- **Filter Chain:** Spring Security uses a chain of filters to process incoming HTTP requests. Our custom `JwtAuthFilter` is inserted into this chain to inspect for a JWT in the `Authorization` header.
-- **Service-Oriented Design:**
-    - `UserDetailsService`: A core Spring Security interface that acts as a bridge to the application's user store (e.g., a database). It's responsible for fetching user details by username.
-    - **Authentication Service:** A dedicated service (`AuthService`) often encapsulates the logic for user registration and login, separating concerns from the controllers.
-- **Dependency Injection:** Spring's DI framework is used to wire all components together (e.g., injecting `UserDetailsService` and `JwtUtil` into the security configuration and filters).
-- **Stateless Authentication:** The server does not maintain session state. The JWT contains all the necessary information to identify the user, making each request self-contained.
-## 3. Detailed Sequence Diagram
+- **Standardized URL Structure:** All API endpoints are consistently structured under `/api/v1/`, improving predictability and developer experience.
+- **Stateless JWT Authentication:** The application uses JSON Web Tokens for stateless authentication, ensuring scalability and simplifying session management.
+- **Granular Security:** `WebSecurityConfig` defines fine-grained access rules:
+    - **Public (No Auth):** `auth`, `feed`, `tags`, and read-only `posts` endpoints are public.
+    - **Authenticated (User Role):** Write operations (`POST`, `PUT`, `DELETE`) on `posts`, `comments`, `likes`, and `favorites` require a valid JWT.
+    - **Admin (Admin Role):** The `/api/v1/users` endpoint is restricted to administrators.
+- **Cross-Origin Resource Sharing (CORS):** The application is configured to accept requests from `http://localhost:3000` and `http://localhost:5173`, enabling frontend integration.
+- **Dependency Injection:** Spring's DI framework is used to wire all components together, promoting loose coupling and testability.
 
-This diagram shows the detailed step-by-step flow for both authentication (login) and authorization (accessing a protected resource).
+## 3. API Contract
 
-### Login Flow
+The API contract is defined by the combination of controller request mappings and security rules.
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant AuthController
-    participant AuthService
-    participant AuthenticationManager
-    participant UserDetailsServiceImpl
-    participant AuthUtil
+| Endpoint                                    | HTTP Method | Access        | Description                                     |
+| ------------------------------------------- | ----------- | ------------- | ----------------------------------------------- |
+| `/api/v1/auth/login`                        | `POST`      | Public        | Authenticates a user and returns a JWT.         |
+| `/api/v1/auth/signup`                       | `POST`      | Public        | Registers a new user.                           |
+| `/api/v1/feed`                              | `GET`       | Public        | Retrieves the main content feed.                |
+| `/api/v1/tags`                              | `GET`       | Public        | Retrieves all tags.                             |
+| `/api/v1/posts/{id}`                        | `GET`       | Public        | Retrieves a single post.                        |
+| `/api/v1/posts/{id}/comments`               | `GET`       | Public        | Retrieves comments for a post.                  |
+| `/api/v1/posts`                             | `POST`      | Authenticated | Creates a new post.                             |
+| `/api/v1/posts/{id}`                        | `PUT`       | Authenticated | Updates an existing post.                       |
+| `/api/v1/posts/{id}`                        | `DELETE`    | Authenticated | Deletes a post.                                 |
+| `/api/v1/posts/{postId}/comments`           | `POST`      | Authenticated | Adds a comment to a post.                       |
+| `/api/v1/posts/{postId}/likes`              | `POST`      | Authenticated | Likes a post.                                   |
+| `/api/v1/posts/{postId}/favorites`          | `POST`      | Authenticated | Favorites a post.                               |
+| `/api/v1/me`                                | `GET`       | Authenticated | Retrieves the current user's profile.           |
+| `/api/v1/users`                             | `GET`       | Admin         | Retrieves a list of all users.                  |
 
-    Client->>+AuthController: POST /auth/login (username, password)
-    AuthController->>+AuthService: login(loginRequestDto)
-    AuthService->>+AuthenticationManager: authenticate(username, password)
-    AuthenticationManager->>+UserDetailsServiceImpl: loadUserByUsername(username)
-    UserDetailsServiceImpl-->>-AuthenticationManager: UserDetails (with hashed password)
-    AuthenticationManager->>AuthenticationManager: Compare passwords
-    AuthenticationManager-->>-AuthService: Authentication object (Principal)
-    AuthService->>+AuthUtil: generateAccessToken(user)
-    AuthUtil-->>-AuthService: JWT String
-    AuthService-->>-AuthController: LoginResponseDto (with token)
-    AuthController-->>-Client: 200 OK (JWT)
-```
-
-### Protected Resource Access Flow
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant JwtAuthFilter
-    participant AuthUtil
-    participant UserRepository
-    participant SecurityContextHolder
-    participant YourController
-
-    Client->>+JwtAuthFilter: GET /api/some/resource (Header: "Bearer <JWT>")
-    JwtAuthFilter->>+AuthUtil: getUsernameFromToken(jwt)
-    AuthUtil->>AuthUtil: Verify signature & expiration
-    AuthUtil-->>-JwtAuthFilter: username
-    JwtAuthFilter->>+UserRepository: findByUsername(username)
-    UserRepository-->>-JwtAuthFilter: User object
-    JwtAuthFilter->>+SecurityContextHolder: setAuthentication(new authToken)
-    SecurityContextHolder-->>-JwtAuthFilter:
-    JwtAuthFilter->>+YourController: continue request
-    YourController-->>-Client: 200 OK (Protected Data)
-```
-### API Contract
 For a detailed overview of all API endpoints, refer to the [API Contract](api-contract.md).

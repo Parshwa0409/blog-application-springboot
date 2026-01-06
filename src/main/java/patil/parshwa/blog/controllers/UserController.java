@@ -12,19 +12,14 @@ import patil.parshwa.blog.services.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
-    }
-
-    @GetMapping("/admin/data")
-    public ResponseEntity<String> getAdminData() {
-        return ResponseEntity.ok("This is sensitive admin data!");
     }
 }

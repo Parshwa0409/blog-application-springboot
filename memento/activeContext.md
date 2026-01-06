@@ -1,25 +1,22 @@
-# Active Context: Initial Code Analysis
+# Active Context: API Standardization and Refactoring
 
 ## 1. Current Focus
 
-The immediate priority is to analyze the user's existing Spring Boot codebase to understand its implementation of JWT authentication. This involves:
-
-1.  **Reading Key Files:** Examining the contents of all files under `src/main/java/patil/parshwa/blog/security/`.
-2.  **Identifying Core Components:** Pinpointing the main classes responsible for authentication and authorization (`WebSecurityConfig`, `JwtAuthFilter`, `UserDetailsServiceImpl`).
-3.  **Mapping the Flow:** Tracing how a user logs in, receives a token, and uses that token to access a protected endpoint.
+The primary focus has been on refactoring and standardizing the entire API to ensure consistency, security, and readiness for frontend integration.
 
 ## 2. Recent Changes
 
-- Memento structure has been initialized with the following core files:
-    - `projectbrief.md`
-    - `productContext.md`
-    - `techContext.md`
-    - `systemPatterns.md`
-    - `activeContext.md`
-    - `progress.md`
+- **URL Standardization:** All API endpoints have been unified under the `/api/v1/` prefix.
+- **Controller Refactoring:**
+    - `AuthController`, `FeedController`, `UserController`, `FavoriteController`, and `PostController` were updated to align with the new URL structure.
+    - The `FavoriteController` was simplified to use a `postId` path variable, and `FavoriteRequestDto` was removed.
+- **Security Enhancement:**
+    - `WebSecurityConfig` was updated with granular access controls, allowing public read-only access for posts while securing all write operations.
+    - CORS is now configured to allow requests from `http://localhost:3000` and `http://localhost:5173`.
+- **Code Cleanup:** The redundant `FavoriteRequestDto` was deleted.
 
 ## 3. Next Steps
 
-1.  **Read the security-related files** to get a complete picture of the current implementation.
-2.  **Start the conceptual explanation** of JWT and Spring Security, using the user's code as a reference.
-3.  **Update `progress.md`** to reflect the initial state of the project (i.e., nothing is "done" yet).
+- Document the finalized API structure and security configuration in `systemPatterns.md`.
+- Update `progress.md` to reflect the completion of the refactoring work.
+- Hand over the project with a clean and consistent backend, ready for frontend development.
